@@ -17,12 +17,14 @@ public class Board extends JPanel{
 	private int boardWidth;
 	private int boardHeight;
 	private Counter currCounter;
+	private boolean gameOver;
 	
 	public Board() {
 		initBoard();
 	}
 	
 	private void initBoard() {
+		gameOver = false;
 		boardHeight = 6;
 		boardWidth = 7;
 		setFocusable(true); // Allows the user to click on the frame and allows the frame to register key events.
@@ -43,19 +45,23 @@ public class Board extends JPanel{
 	}
 	
 	private Counter getCounterAt(int x, int y) { // Gets the counter at a specified position on the board.
+		if((y*boardWidth)+x < 0){
+			return null;
+		}
 		return board[(y * boardWidth) + x]; 
 	}
 
 	@Override
 	public void paintComponent(Graphics g) { // Automatically called, use this to paint.
 		super.paintComponent(g);
+		if(!gameOver){
 		for(int i = 0; i<boardWidth;i++){
 			for(int k = 0; k<boardHeight;k++){
 				if(getCounterAt(i, k).getCounterType() == CounterTypes.RedColour){
 					g.setColor(Color.red);
 					g.fillRect(i*squareWidth(), (int) ((getSize().getHeight() - 20) - k*squareHeight()), squareWidth(), squareHeight());
 				}else{
-					g.setColor(Color.red);
+					g.setColor(Color.yellow);
 					if(getCounterAt(i, k).getCounterType() == CounterTypes.YellowColour){
 						g.fillRect(i*squareWidth(), (int) ((getSize().getHeight() - 20) - k*squareHeight()), squareWidth(), squareHeight());
 					}
@@ -69,6 +75,15 @@ public class Board extends JPanel{
 			g.setColor(Color.yellow);
 		}
 		g.fillRect(currCounterX*squareWidth(), 0, squareWidth(), 20);
+		}else{
+			if(checkWin() == CounterTypes.RedColour){
+				g.setColor(Color.black);
+				g.drawString("RED TEAM WINS", (int) getSize().getWidth()/2-60, (int) getSize().getHeight()/2);
+			}else{
+				g.setColor(Color.black);
+				g.drawString("YELLOW TEAM WINS", (int) getSize().getWidth()/2-60, (int) getSize().getHeight()/2);
+			}
+		}
 	}
 	
 	private void moveCurrLeft() {
@@ -76,6 +91,89 @@ public class Board extends JPanel{
 			currCounterX--;	
 		}
 		repaint();
+	}
+	
+	private CounterTypes checkWin(){
+		for (int i = 0; i < boardWidth; i ++) {
+			  for (int j = 0; j < boardHeight; j ++) {
+			    if(getCounterAt(i, j).getCounterType() == CounterTypes.RedColour){
+			    	System.out.println(i);
+			    	System.out.println(j);
+			    	if(getCounterAt(i, j-1) != null && getCounterAt(i, j-1).getCounterType() == CounterTypes.RedColour){
+			    		if(getCounterAt(i, j-2) != null && getCounterAt(i, j-2).getCounterType() == CounterTypes.RedColour){
+			    			if(getCounterAt(i, j-3) != null && getCounterAt(i, j-3).getCounterType() == CounterTypes.RedColour){
+			    				return CounterTypes.RedColour;
+			    			}
+			    		}
+			    	}
+			    }
+			    if(getCounterAt(i, j) != null && getCounterAt(i, j).getCounterType() == CounterTypes.RedColour){
+			    	if(getCounterAt(i-1, j) != null && getCounterAt(i-1, j).getCounterType() == CounterTypes.RedColour){
+			    		if(getCounterAt(i-2, j) != null && getCounterAt(i-2, j).getCounterType() == CounterTypes.RedColour){
+			    			if(getCounterAt(i-3, j) != null && getCounterAt(i-3, j).getCounterType() == CounterTypes.RedColour){
+			    				return CounterTypes.RedColour;
+			    			}
+			    		}
+			    	}
+			    }
+			    if(getCounterAt(i, j) != null && getCounterAt(i, j).getCounterType() == CounterTypes.RedColour){
+			    	if(getCounterAt(i-1, j-1) != null && getCounterAt(i-1, j-1).getCounterType() == CounterTypes.RedColour){
+			    		if(getCounterAt(i-2, j-2) != null && getCounterAt(i-2, j-2).getCounterType() == CounterTypes.RedColour){
+			    			if(getCounterAt(i-3, j-3) != null && getCounterAt(i-3, j-3).getCounterType() == CounterTypes.RedColour){
+			    				return CounterTypes.RedColour;
+			    			}
+			    		}
+			    	}
+			    }
+			    if(getCounterAt(i, j) != null && getCounterAt(i, j).getCounterType() == CounterTypes.RedColour){
+			    	if(getCounterAt(i-1, j+1) != null && getCounterAt(i-1, j+1).getCounterType() == CounterTypes.RedColour){
+			    		if(getCounterAt(i-2, j+2) != null && getCounterAt(i-2, j+2).getCounterType() == CounterTypes.RedColour){
+			    			if(getCounterAt(i-3, j+3) != null && getCounterAt(i-3, j+3).getCounterType() == CounterTypes.RedColour){
+			    				return CounterTypes.RedColour;
+			    			}
+			    		}
+			    	}
+			    }
+			    if(getCounterAt(i, j) != null && getCounterAt(i, j).getCounterType() == CounterTypes.YellowColour){
+			    	if(getCounterAt(i, j-1) != null && getCounterAt(i, j-1).getCounterType() == CounterTypes.YellowColour){
+			    		if(getCounterAt(i, j-2) != null && getCounterAt(i, j-2).getCounterType() == CounterTypes.YellowColour){
+			    			if(getCounterAt(i, j-3) != null && getCounterAt(i, j-3).getCounterType() == CounterTypes.YellowColour){
+			    				return CounterTypes.YellowColour;
+			    			}
+			    		}
+			    	}
+			    }
+			    if(getCounterAt(i, j) != null && getCounterAt(i, j).getCounterType() == CounterTypes.YellowColour){
+			    	if(getCounterAt(i-1, j) != null && getCounterAt(i-1, j).getCounterType() == CounterTypes.YellowColour){
+			    		if(getCounterAt(i-2, j) != null && getCounterAt(i-2, j).getCounterType() == CounterTypes.YellowColour){
+			    			if(getCounterAt(i-3, j) != null && getCounterAt(i-3, j).getCounterType() == CounterTypes.YellowColour){
+			    				return CounterTypes.YellowColour;
+			    			}
+			    		}
+			    	}
+			    }
+			    if(getCounterAt(i, j) != null && getCounterAt(i, j).getCounterType() == CounterTypes.YellowColour){
+			    	if(getCounterAt(i-1, j-1) != null && getCounterAt(i-1, j-1).getCounterType() == CounterTypes.YellowColour){
+			    		if(getCounterAt(i-2, j-2) != null && getCounterAt(i-2, j-2).getCounterType() == CounterTypes.YellowColour){
+			    			if(getCounterAt(i-3, j-3) != null && getCounterAt(i-3, j-3).getCounterType() == CounterTypes.YellowColour){
+			    				return CounterTypes.YellowColour;
+			    			}
+			    		}
+			    	}
+			    }
+			    if(getCounterAt(i, j) != null && getCounterAt(i, j).getCounterType() == CounterTypes.YellowColour){
+			    	if(getCounterAt(i-1, j+1) != null && getCounterAt(i-1, j+1).getCounterType() == CounterTypes.YellowColour){
+			    		if(getCounterAt(i-2, j+2) != null && getCounterAt(i-2, j+2).getCounterType() == CounterTypes.YellowColour){
+			    			if(getCounterAt(i-3, j+3) != null && getCounterAt(i-3, j+3).getCounterType() == CounterTypes.YellowColour){
+			    				return CounterTypes.YellowColour;
+			    			}
+			    		}
+			    	}
+			    }
+			    
+			  }
+			}
+		return null;
 	}
 	
 	private void moveCurrRight() {
@@ -86,13 +184,21 @@ public class Board extends JPanel{
 	}
 	
 	private void placeCounter(Counter currentCounter, int x) {
-		for(int i = 0;i > boardHeight;i++){
+		loop:
+		for(int i = 0;i < boardHeight;i++){
 			if(getCounterAt(x, i).getCounterType() == CounterTypes.NoColour){
 				board[(i*boardWidth) + x].setCounterType(currentCounter.getCounterType());
+				break loop;
 			}
 		}
 		swapPlayer();
 		currCounterX = (int) ((boardWidth/2)+0.5);
+		if(checkWin() == CounterTypes.RedColour){
+			gameOver = true;
+		}
+		if(checkWin() == CounterTypes.YellowColour){
+			gameOver = true;
+		}
 		repaint();
 	}
 	
@@ -110,6 +216,10 @@ public class Board extends JPanel{
 		@Override
 		public void keyPressed(KeyEvent e) { // on key press
 
+			if(gameOver){
+				return;
+			}
+			
 			int keycode = e.getKeyCode(); // Easier to handle.
 			switch (keycode) { // less if statements.
 			case KeyEvent.VK_LEFT: // if you press the left arrow key then..
